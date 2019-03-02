@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "475794160420",
+    "firebase_url": "https://travaladvidor.firebaseio.com",
+    "project_id": "travaladvidor",
+    "storage_bucket": "travaladvidor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475794160420:android:8f345924fc8bd7de",
+        "android_client_info": {
+          "package_name": "com.alaa7amdy.travaladvidor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475794160420-q5sritf92ji3173v1sfajds4mqkr2ovv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alaa7amdy.travaladvidor",
+            "certificate_hash": "8cd1117cb217f9cd662470f77c7d7952b46ee3fd"
+          }
+        },
+        {
+          "client_id": "475794160420-uujueb86s67fbanu12ls0mgaem3ovgm5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7uEb7aANLtIzaCTyj7MuRnH7-U4_tTGw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475794160420-uujueb86s67fbanu12ls0mgaem3ovgm5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
