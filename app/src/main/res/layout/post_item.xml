@@ -26,7 +26,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/image_profile"
-                android:layout_margin="10dp"/>
+                android:layout_margin="5dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -39,17 +39,28 @@
 
         </LinearLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/image_page_slider"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"/>
+
+
+            <!-- commment
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="250dp"
                 android:id="@+id/post_image"
                 app:layout_constraintDimensionRatio="1:1"/>
+                -->
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -69,6 +80,16 @@
                 android:src="@drawable/ic_comment"
                 android:layout_toEndOf="@id/like"
                 android:layout_marginStart="10dp"/>
+            <LinearLayout
+                android:id="@+id/image_page_dots"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginEnd="40dp"
+                android:layout_toRightOf="@id/comment"/>
+
 
             <ImageView
                 android:layout_width="30dp"

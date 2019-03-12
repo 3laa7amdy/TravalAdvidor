@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
-
 public class MyFotosAdapter extends RecyclerView.Adapter<MyFotosAdapter.ImageViewHolder> {
 
     private Context mContext;
@@ -42,7 +41,7 @@ public class MyFotosAdapter extends RecyclerView.Adapter<MyFotosAdapter.ImageVie
 
         final Post post = mPosts.get(position);
 
-        Glide.with(mContext).load(post.getPostimage()).into(holder.post_image);
+        Glide.with(mContext).load(post.getPostimage0()).into(holder.post_image);
 
         holder.post_image.setOnClickListener(new View.OnClickListener() {
             @Override

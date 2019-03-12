@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +23,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alaa7amdy.travaladvidor.Adapter.Images.SliderPagerAdapter;
 import com.alaa7amdy.travaladvidor.CommentsActivity;
 import com.alaa7amdy.travaladvidor.FollowersActivity;
 import com.alaa7amdy.travaladvidor.Fragments.PostDetailFragment;
@@ -38,6 +43,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +53,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     private Context mContext;
     private List<Post> mPosts;
+
+    private List<String> followingList;
+
+
+    SliderPagerAdapter sliderPagerAdapter;
+    ArrayList<Uri> slider_image_list ;
+
+
 
     private FirebaseUser firebaseUser;
 
@@ -59,6 +73,42 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     @Override
     public PostAdapter.ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
+
+
+//        images_slider = view.findViewById(R.id.image_page_slider);
+//        pages_dots = view.findViewById(R.id.image_page_dots);
+//        slider_image_list = new ArrayList<>();
+//
+//        postList = new ArrayList<>();
+        //postAdapter = new PostAdapter(mContext, postList);
+//        slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//        slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//        slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//        slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//        sliderPagerAdapter = new SliderPagerAdapter(mContext,slider_image_list);
+//        images_slider.setAdapter(sliderPagerAdapter);
+//        images_slider.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                addBottomDots(position);
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
+
+        //checkFollowing();
+
+
+
+
         return new PostAdapter.ImageViewHolder(view);
     }
 
@@ -68,9 +118,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Post post = mPosts.get(position);
 
-        Glide.with(mContext).load(post.getPostimage())
-                .apply(new RequestOptions().placeholder(R.drawable.placeholder))
-                .into(holder.post_image);
+        //int name_id = postList.get(position).getName_id();
+        //List<DataWall> dataModelList = DataManager.loadByQuery(context, name_id);
+
+        initializeViews(post.getimages(), holder, position);
+
+        Toast.makeText(mContext, "imagesNr = " + post.getImagesNr(), Toast.LENGTH_SHORT).show();
 
         if (post.getDescription().equals("")){
             holder.description.setVisibility(View.GONE);
@@ -168,17 +221,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             }
         });
 
-        holder.post_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-                editor.putString("postid", post.getPostid());
-                editor.apply();
-
-                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new PostDetailFragment()).commit();
-            }
-        });
+//        holder.post_image.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SharedPreferences.Editor editor = mContext.getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+//                editor.putString("postid", post.getPostid());
+//                editor.apply();
+//
+//                ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new PostDetailFragment()).commit();
+//            }
+//        });
 
         holder.likes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,15 +292,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView image_profile, post_image, like, comment, save, more;
+        public ImageView image_profile, like, comment, save, more;
         public TextView username, likes, publisher, description, comments;
+
+
+        public ViewPager images_slider;
+        public LinearLayout pages_dots;
+        public TextView[] dots;
+
 
         public ImageViewHolder(View itemView) {
             super(itemView);
 
             image_profile = itemView.findViewById(R.id.image_profile);
             username = itemView.findViewById(R.id.username);
-            post_image = itemView.findViewById(R.id.post_image);
             like = itemView.findViewById(R.id.like);
             comment = itemView.findViewById(R.id.comment);
             save = itemView.findViewById(R.id.save);
@@ -256,7 +314,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
+
+            pages_dots = (LinearLayout) itemView.findViewById(R.id.image_page_dots);
+            images_slider = (ViewPager)itemView.findViewById(R.id.image_page_slider);
+
+
+//            slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//            slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
+//            slider_image_list.add(Uri.parse("https://firebasestorage.googleapis.com/v0/b/instagramapp-956f9.appspot.com/o/posts%2F189258?alt=media&token=b67709fe-8d7c-487c-90bc-ac18c02bb375"));
         }
+
+
     }
 
     private void addNotification(String userid, String postid){
@@ -447,4 +515,127 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             }
         });
     }
+
+    private void readPostImages(String postid){
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(postid);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                slider_image_list.clear();
+                Post post = dataSnapshot.getValue(Post.class);
+                int x = (int) dataSnapshot.getChildrenCount();
+                int imgnr = x-3;
+                slider_image_list.addAll(post.getimages());
+                sliderPagerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void checkFollowing(){
+        followingList = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("following");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                followingList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    followingList.add(snapshot.getKey());
+                }
+
+                readPosts();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void readPosts(){
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //postList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Post post = snapshot.getValue(Post.class);
+                    for (String id : followingList){
+
+                        if (post.getPublisher().equals(id)){
+
+                            readPostImages(post.getPostid());
+                        }
+                    }
+                }
+
+                //postAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initializeViews(final ArrayList<Uri> dataModel, final RecyclerView.ViewHolder holder, int position) {
+        SliderPagerAdapter adapter = new SliderPagerAdapter(mContext, dataModel);
+        ((ImageViewHolder)holder).images_slider.setAdapter(adapter);
+        if (dataModel.size()>1){
+            addBottomDots(0,dataModel.size(),((ImageViewHolder)holder));
+        }
+        ((ImageViewHolder)holder).images_slider.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                addBottomDots(position,dataModel.size(),((ImageViewHolder)holder));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+    }
+    public void addBottomDots(int currentPage,int slidesNr, final RecyclerView.ViewHolder holder) {
+        //slider_image_list =
+        ((ImageViewHolder)holder).dots = new TextView[slidesNr];
+
+        ((ImageViewHolder)holder).pages_dots.removeAllViews();
+        ((ImageViewHolder)holder).pages_dots.setPadding(0, 0, 0, 20);
+        for (int i = 0; i < ((ImageViewHolder)holder).dots.length; i++) {
+            ((ImageViewHolder)holder).dots[i] = new TextView(mContext);
+            ((ImageViewHolder)holder).dots[i].setText(Html.fromHtml("&#8226;"));
+            ((ImageViewHolder)holder).dots[i].setTextSize(35);
+            ((ImageViewHolder)holder).dots[i].setTextColor(Color.parseColor("#9f9f9f")); // un selected
+            ((ImageViewHolder)holder).pages_dots.addView(((ImageViewHolder)holder).dots[i]);
+        }
+
+        if (((ImageViewHolder)holder).dots.length >0)
+            ((ImageViewHolder)holder).dots[currentPage].setTextColor(Color.parseColor("#2f383a")); // selected
+    }
+
+
+
+
+
 }

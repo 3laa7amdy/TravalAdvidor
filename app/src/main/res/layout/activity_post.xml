@@ -54,13 +54,20 @@
         android:padding="8dp"
         android:orientation="vertical">
 
-        <ImageView
+        <android.support.v4.view.ViewPager
+            android:id="@+id/image_page_slider"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerInside"
-            android:layout_gravity="center"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/image_added"/>
+            android:layout_height="250dp"
+            android:layout_marginTop="80dp"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:id="@+id/image_page_dots"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal" />
 
         <EditText
             android:layout_width="match_parent"

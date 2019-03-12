@@ -1,13 +1,18 @@
 package com.alaa7amdy.travaladvidor.Fragments;
-
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.alaa7amdy.travaladvidor.Adapter.PostAdapter;
 import com.alaa7amdy.travaladvidor.Model.Post;
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
+
 
 
 public class PostDetailFragment extends Fragment {
@@ -63,7 +69,7 @@ public class PostDetailFragment extends Fragment {
                 postList.clear();
                 Post post = dataSnapshot.getValue(Post.class);
                 postList.add(post);
-                
+
                 postAdapter.notifyDataSetChanged();
             }
 

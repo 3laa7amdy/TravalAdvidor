@@ -5,6 +5,9 @@
     <color name="colorAccent">#c2bdbf</color>
     <color name="colorBlack">#000000</color>
 
+    <color name="gray">#9f9f9f</color>
+    <color name="bg_gray">#e6e6e5</color>
+
     <color name="colorGreen">#4cab03</color>
     <color name="colorWindow">?android:attr/windowBackground</color>
 </resources>

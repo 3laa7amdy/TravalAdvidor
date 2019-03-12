@@ -1,5 +1,4 @@
 package com.alaa7amdy.travaladvidor.Fragments;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -86,7 +85,7 @@ public class ProfileFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(mLayoutManager);
-        postList = new ArrayList<>();
+        postList = new ArrayList<Post>();
         myFotosAdapter = new MyFotosAdapter(getContext(), postList);
         recyclerView.setAdapter(myFotosAdapter);
 
