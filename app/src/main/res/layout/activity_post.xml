@@ -48,35 +48,64 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="vertical">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/image_page_slider"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="80dp"
-            android:layout_gravity="center"/>
-
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/image_page_dots"
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:orientation="horizontal" />
-
-        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Description"
-            android:id="@+id/description"
-            android:maxLines="5"/>
+            android:padding="8dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Description"
+                android:padding="5dp"
+                android:id="@+id/description"
+                android:textSize="22sp"
+                android:background="@drawable/button_background"
+                />
 
+
+            <LinearLayout
+                android:id="@+id/image_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/image_page_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center"/>
+
+                <LinearLayout
+                    android:id="@+id/image_page_dots"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="-10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/add_images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="right"
+                android:text="add photo"/>
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
 </LinearLayout>

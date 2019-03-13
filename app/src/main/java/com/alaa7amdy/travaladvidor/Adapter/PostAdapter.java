@@ -121,14 +121,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         //int name_id = postList.get(position).getName_id();
         //List<DataWall> dataModelList = DataManager.loadByQuery(context, name_id);
 
-        initializeViews(post.getimages(), holder, position);
-
-        Toast.makeText(mContext, "imagesNr = " + post.getImagesNr(), Toast.LENGTH_SHORT).show();
+        initializeViews(post.getimages(), post.getImagesNr(), holder, position);
 
         if (post.getDescription().equals("")){
             holder.description.setVisibility(View.GONE);
-        } else {
+        } else if (post.getDescription().length() < 100) {
             holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(post.getDescription());
+        } else if (post.getDescription().length() > 100) {
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setMaxLines(4);
+            holder.readMore.setVisibility(View.VISIBLE);
             holder.description.setText(post.getDescription());
         }
 
@@ -149,6 +152,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).removeValue();
                 }
+            }
+        });
+
+        holder.readMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.description.setVisibility(View.VISIBLE);
+                holder.description.setMaxLines(250);
+                holder.readMore.setVisibility(View.INVISIBLE);
+                holder.description.setText(post.getDescription());
             }
         });
 
@@ -293,7 +306,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView image_profile, like, comment, save, more;
-        public TextView username, likes, publisher, description, comments;
+        public TextView username, likes, publisher, description, comments, readMore;
 
 
         public ViewPager images_slider;
@@ -314,6 +327,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
+            readMore = itemView.findViewById(R.id.read_more);
 
             pages_dots = (LinearLayout) itemView.findViewById(R.id.image_page_dots);
             images_slider = (ViewPager)itemView.findViewById(R.id.image_page_slider);
@@ -591,29 +605,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         });
     }
 
-    private void initializeViews(final ArrayList<Uri> dataModel, final RecyclerView.ViewHolder holder, int position) {
-        SliderPagerAdapter adapter = new SliderPagerAdapter(mContext, dataModel);
-        ((ImageViewHolder)holder).images_slider.setAdapter(adapter);
-        if (dataModel.size()>1){
-            addBottomDots(0,dataModel.size(),((ImageViewHolder)holder));
+    private void initializeViews(final ArrayList<Uri> dataModel,int imageNr, final RecyclerView.ViewHolder holder, int position) {
+        if (imageNr>0){
+            SliderPagerAdapter adapter = new SliderPagerAdapter(mContext, dataModel);
+            ((ImageViewHolder)holder).images_slider.setAdapter(adapter);
+            if (dataModel.size()>1){
+                addBottomDots(0,dataModel.size(),((ImageViewHolder)holder));
+            }
+            ((ImageViewHolder)holder).images_slider.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    addBottomDots(position,dataModel.size(),((ImageViewHolder)holder));
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+
+
+        }else {
+            ((ImageViewHolder)holder).images_slider.setVisibility(View.GONE);
         }
-        ((ImageViewHolder)holder).images_slider.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                addBottomDots(position,dataModel.size(),((ImageViewHolder)holder));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
 
     }
     public void addBottomDots(int currentPage,int slidesNr, final RecyclerView.ViewHolder holder) {

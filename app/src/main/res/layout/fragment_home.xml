@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.HomeFragment">
+    tools:context=".Fragments.Home.HomeFragment">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/bar"
@@ -24,7 +24,7 @@
                 <ImageView
                     android:layout_width="180dp"
                     android:layout_height="35dp"
-                    android:src="@drawable/advisorlogo"
+                    android:src="@drawable/logo"
                     android:id="@+id/logo"
                     android:layout_marginLeft="-20dp"
                     android:layout_alignParentLeft="true"
@@ -67,6 +67,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#ddd"
                 android:id="@+id/recycler_view"
                 android:layout_below="@id/recycler_view_story"/>
 

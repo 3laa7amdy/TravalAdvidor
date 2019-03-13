@@ -7,10 +7,12 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 import com.alaa7amdy.travaladvidor.Adapter.Images.GifSizeFilter;
 import com.alaa7amdy.travaladvidor.Adapter.Images.Glide4Engine;
 import com.alaa7amdy.travaladvidor.Adapter.Images.SliderPagerAdapter;
+import com.alaa7amdy.travaladvidor.MainActivity;
+import com.alaa7amdy.travaladvidor.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,7 +39,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.filter.Filter;
@@ -46,6 +49,7 @@ import com.zhihu.matisse.listener.OnSelectedListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -62,7 +66,10 @@ public class PostActivity extends AppCompatActivity {
 
     ImageView close;
     TextView post;
+    TextView addImages;
+    LinearLayout imagesContainer;
     EditText description;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,8 @@ public class PostActivity extends AppCompatActivity {
         close = findViewById(R.id.close);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
+        addImages = findViewById(R.id.add_images);
+        imagesContainer = findViewById(R.id.image_container);
 
         pages_dots = findViewById(R.id.image_page_dots);
         images_slider = (ViewPager)findViewById(R.id.image_page_slider);
@@ -111,13 +120,30 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //uploadImage_10();
-                up();
+                if (slider_image_list.size()>0 || !TextUtils.isEmpty(description.getText().toString())){
+                    //Toast.makeText(PostActivity.this, "Empty Post ", Toast.LENGTH_SHORT).show();
+                    up();
+                }else {
+                    Toast.makeText(PostActivity.this, "Empty Post ", Toast.LENGTH_SHORT).show();
+                }
+
 
 
             }
         });
 
+        addImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImages();
+            }
+        });
 
+
+
+    }
+
+    private void getImages() {
         Matisse.from(PostActivity.this)
                 .choose(MimeType.ofAll(), false)
                 .countable(true)
@@ -228,16 +254,18 @@ public class PostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
 
+            imagesContainer.setVisibility(View.VISIBLE);
+            addImages.setVisibility(View.GONE);
+
             sliderPagerAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data)) ;
-
-
-
             slider_image_list = (ArrayList<Uri>) Matisse.obtainResult(data);
             //mSelected
             Log.d("Matisse", "mSelected: " + slider_image_list);
             sliderPagerAdapter.notifyDataSetChanged();
 
-            addBottomDots(0);
+            if (slider_image_list.size()>0) {
+                addBottomDots(0);
+            }
 
         }else {
             Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();

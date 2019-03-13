@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.alaa7amdy.travaladvidor.Fragments.HomeFragment;
+import com.alaa7amdy.travaladvidor.Fragments.Home.HomeActivityFragment;
 import com.alaa7amdy.travaladvidor.Fragments.NotificationFragment;
 import com.alaa7amdy.travaladvidor.Fragments.ProfileFragment;
 import com.alaa7amdy.travaladvidor.Fragments.SearchFragment;
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationView bottom_navigation;
+    public static BottomNavigationView bottom_navigation;
     Fragment selectedfragment = null;
 
     @Override
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     new ProfileFragment()).commit();
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new HomeFragment()).commit();
+                    new HomeActivityFragment()).commit();
         }
 
     }
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (item.getItemId()){
                         case R.id.nav_home:
-                            selectedfragment = new HomeFragment();
+                            selectedfragment = new HomeActivityFragment();
                             break;
                         case R.id.nav_search:
                             selectedfragment = new SearchFragment();
