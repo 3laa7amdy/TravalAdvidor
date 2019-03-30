@@ -530,80 +530,83 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         });
     }
 
-    private void readPostImages(String postid){
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(postid);
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                slider_image_list.clear();
-                Post post = dataSnapshot.getValue(Post.class);
-                int x = (int) dataSnapshot.getChildrenCount();
-                int imgnr = x-3;
-                slider_image_list.addAll(post.getimages());
-                sliderPagerAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
-    private void checkFollowing(){
-        followingList = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("following");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                followingList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    followingList.add(snapshot.getKey());
-                }
-
-                readPosts();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void readPosts(){
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //postList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Post post = snapshot.getValue(Post.class);
-                    for (String id : followingList){
-
-                        if (post.getPublisher().equals(id)){
-
-                            readPostImages(post.getPostid());
-                        }
-                    }
-                }
-
-                //postAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    private void readPostImages(String postid){
+//
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(postid);
+//
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                slider_image_list.clear();
+//                Post post = dataSnapshot.getValue(Post.class);
+//                int x = (int) dataSnapshot.getChildrenCount();
+//                int imgnr = x-3;
+//                slider_image_list.addAll(post.getimages());
+//                sliderPagerAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+//
+//
+//    private void checkFollowing(){
+//        followingList = new ArrayList<>();
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+//                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .child("following");
+//
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                followingList.clear();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                    followingList.add(snapshot.getKey());
+//                }
+//
+//                readPosts();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+//
+//
+//    private void readPosts(){
+//        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+//
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                //postList.clear();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                    Post post = snapshot.getValue(Post.class);
+//                    for (String id : followingList){
+//
+//                        if (post.getPublisher().equals(id)){
+//
+//                            readPostImages(post.getPostid());
+//                        }
+//                    }
+//                }
+//
+//                //postAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+//
 
     private void initializeViews(final ArrayList<Uri> dataModel,int imageNr, final RecyclerView.ViewHolder holder, int position) {
         if (imageNr>0){
@@ -644,7 +647,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         for (int i = 0; i < ((ImageViewHolder)holder).dots.length; i++) {
             ((ImageViewHolder)holder).dots[i] = new TextView(mContext);
             ((ImageViewHolder)holder).dots[i].setText(Html.fromHtml("&#8226;"));
-            ((ImageViewHolder)holder).dots[i].setTextSize(35);
+            ((ImageViewHolder)holder).dots[i].setTextSize(25);
             ((ImageViewHolder)holder).dots[i].setTextColor(Color.parseColor("#9f9f9f")); // un selected
             ((ImageViewHolder)holder).pages_dots.addView(((ImageViewHolder)holder).dots[i]);
         }
@@ -652,9 +655,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         if (((ImageViewHolder)holder).dots.length >0)
             ((ImageViewHolder)holder).dots[currentPage].setTextColor(Color.parseColor("#2f383a")); // selected
     }
-
-
-
 
 
 }

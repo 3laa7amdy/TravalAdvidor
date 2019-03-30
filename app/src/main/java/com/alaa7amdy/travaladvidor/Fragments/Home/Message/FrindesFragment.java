@@ -39,6 +39,11 @@ public class FrindesFragment extends Fragment {
 
     EditText search_users;
 
+    String id;
+    String title;
+
+    private List<String> idList;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,7 +56,13 @@ public class FrindesFragment extends Fragment {
 
         mUsers = new ArrayList<>();
 
-        readUsers();
+        userChatAdapter = new UserChatAdapter(getContext(), mUsers, false);
+        recyclerView.setAdapter(userChatAdapter);
+
+        id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        idList = new ArrayList<>();
+
+        getFollowing();
 
         search_users = view.findViewById(R.id.search_bar);
         search_users.addTextChangedListener(new TextWatcher() {
@@ -95,8 +106,8 @@ public class FrindesFragment extends Fragment {
                     }
                 }
 
-                userChatAdapter = new UserChatAdapter(getContext(), mUsers, false);
-                recyclerView.setAdapter(userChatAdapter);
+                userChatAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -120,19 +131,65 @@ public class FrindesFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
 
-                        if (!user.getId().equals(firebaseUser.getUid())) {
-                            mUsers.add(user);
+                        for (String id : idList){
+                            if (user.getId().equals(id) && !user.getId().equals(firebaseUser.getUid())){
+                                mUsers.add(user);
+                            }
                         }
 
                     }
 
-                    userChatAdapter = new UserChatAdapter(getContext(), mUsers, false);
-                    recyclerView.setAdapter(userChatAdapter);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getFollowing() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Follow")
+                .child(id).child("following");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                idList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    idList.add(snapshot.getKey());
+                }
+                showUsers();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void showUsers() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mUsers.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+                    for (String id : idList){
+                        if (user.getId().equals(id)){
+                            mUsers.add(user);
+                        }
+                    }
+                }
+
+                userChatAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

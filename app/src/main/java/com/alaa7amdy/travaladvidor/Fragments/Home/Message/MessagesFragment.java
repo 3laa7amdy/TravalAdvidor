@@ -127,10 +127,18 @@ public class MessagesFragment extends Fragment {
 
      private void getData(){
          DatabaseReference reference =FirebaseDatabase.getInstance().getReference("Chats");
+         final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
+         viewPagerAdapter.addFragment(new ChatsFragment(), "Chats");
+         viewPagerAdapter.addFragment(new FrindesFragment(), "Friends");
+         viewPager.setAdapter(viewPagerAdapter);
+         tabLayout.setupWithViewPager(viewPager);
+         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+
+         //viewPagerAdapter.addFragment(new ChatsFragment(), "(" + unread + ") Chats");
          reference.addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange (@NonNull DataSnapshot dataSnapshot){
-                 ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
                  int unread = 0;
                  for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                      Chat chat = snapshot.getValue(Chat.class);
@@ -138,19 +146,12 @@ public class MessagesFragment extends Fragment {
                          unread++;
                      }
                  }
-
                  if (unread == 0) {
-                     viewPagerAdapter.addFragment(new ChatsFragment(), "Chats");
-                 } else {
-                     viewPagerAdapter.addFragment(new ChatsFragment(), "(" + unread + ") Chats");
+                     tabLayout.getTabAt(0).setText("Chats");
+                 }else {
+                     tabLayout.getTabAt(0).setText("(" + unread + ") Chats");
                  }
 
-                 viewPagerAdapter.addFragment(new FrindesFragment(), "Friends");
-
-                 viewPager.setAdapter(viewPagerAdapter);
-                 tabLayout.setupWithViewPager(viewPager);
-                 tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-                 tabLayout.getTabAt(1).setIcon(tabIcons[1]);
                  //tabLayout.getTabAt(2).setIcon(tabIcons[2]);
 
 

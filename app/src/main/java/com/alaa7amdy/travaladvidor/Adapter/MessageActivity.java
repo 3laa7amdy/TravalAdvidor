@@ -100,7 +100,6 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MessageActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
-                text_send.setText("");
             }
         });
 
@@ -150,7 +149,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void sendMessage(String sender, final String receiver, String message){
 
-
+        text_send.setText("");
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
