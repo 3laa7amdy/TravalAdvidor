@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alaa7amdy.travaladvidor.Adapter.PostAdapter;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,11 +51,13 @@ public class ProfileFragment extends Fragment {
     String profileid;
 
     private RecyclerView recyclerView;
-    private MyFotosAdapter myFotosAdapter;
+    //private MyFotosAdapter myFotosAdapter;
+    private PostAdapter postAdapter;
     private List<Post> postList;
 
     private RecyclerView recyclerView_saves;
-    private MyFotosAdapter myFotosAdapter_saves;
+    //private MyFotosAdapter myFotosAdapter_saves;
+    private PostAdapter postAdapter_saves;
     private List<Post> postList_saves;
 
     ImageButton my_fotos, saved_fotos;
@@ -83,19 +86,21 @@ public class ProfileFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         postList = new ArrayList<Post>();
-        myFotosAdapter = new MyFotosAdapter(getContext(), postList);
-        recyclerView.setAdapter(myFotosAdapter);
+        //myFotosAdapter = new MyFotosAdapter(getContext(), postList);
+        postAdapter = new PostAdapter(getContext(), postList);
+        recyclerView.setAdapter(postAdapter);
 
         recyclerView_saves = view.findViewById(R.id.recycler_view_save);
         recyclerView_saves.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManagers = new GridLayoutManager(getContext(), 3);
+        LinearLayoutManager mLayoutManagers = new LinearLayoutManager(getContext());
         recyclerView_saves.setLayoutManager(mLayoutManagers);
         postList_saves = new ArrayList<>();
-        myFotosAdapter_saves = new MyFotosAdapter(getContext(), postList_saves);
-        recyclerView_saves.setAdapter(myFotosAdapter_saves);
+        //myFotosAdapter_saves = new MyFotosAdapter(getContext(), postList_saves);
+        postAdapter_saves = new PostAdapter(getContext(), postList_saves);
+        recyclerView_saves.setAdapter(postAdapter_saves);
 
         recyclerView.setVisibility(View.VISIBLE);
         recyclerView_saves.setVisibility(View.GONE);
@@ -103,7 +108,7 @@ public class ProfileFragment extends Fragment {
         userInfo();
         getFollowers();
         getNrPosts();
-        myFotos();
+        myPosts();
         mySaves();
 
         if (profileid.equals(firebaseUser.getUid())){
@@ -293,7 +298,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void myFotos(){
+    private void myPosts(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -301,12 +306,12 @@ public class ProfileFragment extends Fragment {
                 postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Post post = snapshot.getValue(Post.class);
-                    if (post.getPublisher().equals(profileid) && post.getImagesNr()>0){
+                    if (post.getPublisher().equals(profileid) ){
                         postList.add(post);
                     }
                 }
                 Collections.reverse(postList);
-                myFotosAdapter.notifyDataSetChanged();
+                postAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -350,7 +355,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 }
-                myFotosAdapter_saves.notifyDataSetChanged();
+                postAdapter_saves.notifyDataSetChanged();
             }
 
             @Override

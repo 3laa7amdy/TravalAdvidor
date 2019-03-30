@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alaa7amdy.travaladvidor.Fragments.Home.Message.MessagesFragment;
 import com.alaa7amdy.travaladvidor.R;
 
 import static com.alaa7amdy.travaladvidor.MainActivity.bottom_navigation;

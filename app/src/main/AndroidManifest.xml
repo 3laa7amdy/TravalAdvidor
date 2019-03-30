@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alaa7amdy.travaladvidor">
 
@@ -12,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Adapter.MessageActivity"></activity>
         <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,6 +33,7 @@
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".StoryActivity" />
-        <activity android:name=".AddStoryActivity"></activity>
+        <activity android:name=".AddStoryActivity" />
     </application>
+
 </manifest>
