@@ -6,5 +6,8 @@
 
     <string name="permission_request_denied">Permission request denied</string>
     <string name="error_gif">x or y bound size should be at least %1$dpx and file size should be no more than %2$sM</string>
+    <string name="facebook_app_id">1018084571723277</string>
+    <string name="fb_login_protocol_scheme">fb1018084571723277</string>
+
 
 </resources>

@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "475794160420-bps054af7jg6au4a5u0j37cjkocn6pj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alaa7amdy.travaladvidor",
+            "certificate_hash": "b787fa8d55b9fe78d942b2b34b3ba2c830f557de"
+          }
+        },
+        {
           "client_id": "475794160420-uujueb86s67fbanu12ls0mgaem3ovgm5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -33,20 +41,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "475794160420-uujueb86s67fbanu12ls0mgaem3ovgm5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

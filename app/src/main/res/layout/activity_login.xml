@@ -43,11 +43,17 @@
         android:textColor="@color/colorPrimary"
         android:background="@drawable/button_background"/>
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_margin="15dp"
+        android:layout_width="208dp"
+        android:layout_height="25dp"
+        tools:layout_editor_absoluteY="262dp" />
     <TextView
+        android:id="@+id/txt_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an sccount? Sign up"
-        android:id="@+id/txt_signup"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="7dp"
+        android:text="Don't have an sccount? Sign up" />
 
 </LinearLayout>
