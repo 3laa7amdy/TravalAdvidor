@@ -30,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
 
+    ProgressDialog pd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+
+
+                pd = new ProgressDialog(LoginActivity.this);
                 pd.setMessage("Please wait...");
                 pd.show();
 
@@ -63,38 +67,42 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "All fields are required!", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    auth.signInWithEmailAndPassword(str_email, str_password)
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-
-                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
-                                                .child(auth.getCurrentUser().getUid());
-
-                                        reference.addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                pd.dismiss();
-                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                pd.dismiss();
-                                            }
-                                        });
-                                    } else {
-                                        pd.dismiss();
-                                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                    log(str_email, str_password);
                 }
             }
         });
+    }
+
+    private void log(String str_email, String str_password) {
+        auth.signInWithEmailAndPassword(str_email, str_password)
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
+                                    .child(auth.getCurrentUser().getUid());
+
+                            reference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    pd.dismiss();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    pd.dismiss();
+                                }
+                            });
+                        } else {
+                            pd.dismiss();
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

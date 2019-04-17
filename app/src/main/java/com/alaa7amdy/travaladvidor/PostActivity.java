@@ -1,14 +1,18 @@
 package com.alaa7amdy.travaladvidor;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -54,6 +58,7 @@ import java.util.Map;
 public class PostActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS =22 ;
 
     SliderPagerAdapter sliderPagerAdapter;
     ArrayList<Uri> slider_image_list ;
@@ -69,6 +74,8 @@ public class PostActivity extends AppCompatActivity {
     TextView addImages;
     LinearLayout imagesContainer;
     EditText description;
+
+    private Uri mImageUri;
 
 
     @Override
@@ -144,40 +151,35 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void getImages() {
-        Matisse.from(PostActivity.this)
-                .choose(MimeType.ofAll(), false)
-                .countable(true)
-                .capture(true)
-                .captureStrategy(
-                        new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider","test"))
-                .maxSelectable(10)
-                .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                .gridExpectedSize(
-                        getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                .thumbnailScale(0.85f)
-//                                            .imageEngine(new GlideEngine())  // for glide-V3
-                .imageEngine(new Glide4Engine())    // for glide-V4
-                .setOnSelectedListener(new OnSelectedListener() {
-                    @Override
-                    public void onSelected(
-                            @NonNull List<Uri> uriList, @NonNull List<String> pathList) {
-                        // DO SOMETHING IMMEDIATELY HERE
-                        Log.e("onSelected", "onSelected: pathList=" + pathList);
 
-                    }
-                })
-                .originalEnable(true)
-                .maxOriginalSize(10)
-                .autoHideToolbarOnSingleTap(true)
-                .setOnCheckedListener(new OnCheckedListener() {
-                    @Override
-                    public void onCheck(boolean isChecked) {
-                        // DO SOMETHING IMMEDIATELY HERE
-                        Log.e("isChecked", "onCheck: isChecked=" + isChecked);
-                    }
-                })
-                .forResult(REQUEST_CODE_CHOOSE);
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(PostActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(PostActivity.this,
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(PostActivity.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+            openGallery();
+        }
+
+
     }
 
     private void up (){
@@ -186,7 +188,7 @@ public class PostActivity extends AppCompatActivity {
         pd.setMessage("Posting");
         pd.show();
 
-        StorageReference filepath = FirebaseStorage.getInstance().getReference().child("posts");
+        final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("posts");
 
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
@@ -204,31 +206,117 @@ public class PostActivity extends AppCompatActivity {
 
         reference.child(postid).setValue(hashMap);
 
-        for (int i = 0 ; i < slider_image_list.size(); i++){
+        final int size =  slider_image_list.size()-1;
+        if ( slider_image_list.size() != 0 ) {
+            for (int i = 0; i < slider_image_list.size(); i++) {
 
-            final int finalI = i;
-            filepath.child(slider_image_list.get(i).getLastPathSegment()).putFile(slider_image_list.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadURL = taskSnapshot.getDownloadUrl();
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("postimage"+ finalI +"",downloadURL.toString() );
-                    reference.child(postid).updateChildren(map);
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
 
-                            Toast.makeText(PostActivity.this, "Failed "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                final int finalI = i;
+
+                final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
+                        + "." + getFileExtension(slider_image_list.get(i)));
+
+                StorageTask uploadTask = fileReference.putFile(slider_image_list.get(i));
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
                         }
-                    });
+                        return fileReference.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
 
+                            Uri downloadURL = task.getResult();
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("postimage" + finalI + "", downloadURL.toString());
+                            reference.child(postid).updateChildren(map);
+
+
+                            if ( size == finalI ) {
+                                pd.dismiss();
+                                startActivity(new Intent(PostActivity.this, MainActivity.class));
+                                finish();
+//                            }else {
+//                                Toast.makeText(PostActivity.this, "uofwnemwefowe", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } else {
+                            Toast.makeText(PostActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+//            StorageTask uploadTask = filepath.child(slider_image_list.get(i).getLastPathSegment()).putFile(slider_image_list.get(i));
+//            uploadTask.continueWithTask(new Continuation() {
+//                @Override
+//                public Object then(@NonNull Task task) throws Exception {
+//                    if(!task.isSuccessful()){
+//                        throw task.getException();
+//                    }
+//
+//                    return filepath.getDownloadUrl();
+//                }
+//            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Uri> task) {
+//                    if (task.isSuccessful()){
+//
+//                        Uri downloadURL = task.getResult();
+//                        HashMap<String, Object> map = new HashMap<>();
+//                        map.put("postimage"+ finalI +"",downloadURL.toString() );
+//                        reference.child(postid).updateChildren(map);
+//
+//                    }else {
+//                        Toast.makeText(PostActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Toast.makeText(PostActivity.this, "Failed "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+
+//            filepath.child(slider_image_list.get(i).getLastPathSegment()).putFile(slider_image_list.get(i)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    Uri downloadURL = taskSnapshot.getUploadSessionUri();
+//                    HashMap<String, Object> map = new HashMap<>();
+//                    map.put("postimage"+ finalI +"",downloadURL.toString() );
+//                    reference.child(postid).updateChildren(map);
+//                }
+//            })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//
+//                            Toast.makeText(PostActivity.this, "Failed "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+
+            }
+        } else  {
+            pd.dismiss();
+            startActivity(new Intent(PostActivity.this, MainActivity.class));
+            finish();
         }
-        pd.dismiss();
 
-        startActivity(new Intent(PostActivity.this, MainActivity.class));
-        finish();
+
+        
+
+
+
     }
 
     public void addBottomDots(int currentPage) {
@@ -272,5 +360,72 @@ public class PostActivity extends AppCompatActivity {
             startActivity(new Intent(PostActivity.this, MainActivity.class));
             finish();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    openGallery();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Can't access images \n Go to Settings > Search > App permissions > Storage > and switch Travel Advisor on", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+    public void openGallery(){
+        Matisse.from(PostActivity.this)
+                .choose(MimeType.ofAll(), false)
+                .countable(true)
+                .capture(true)
+                .captureStrategy(
+                        new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider","test"))
+                .maxSelectable(10)
+                .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                .gridExpectedSize(
+                        getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                .thumbnailScale(0.85f)
+//                                            .imageEngine(new GlideEngine())  // for glide-V3
+                .imageEngine(new Glide4Engine())    // for glide-V4
+                .setOnSelectedListener(new OnSelectedListener() {
+                    @Override
+                    public void onSelected(
+                            @NonNull List<Uri> uriList, @NonNull List<String> pathList) {
+                        // DO SOMETHING IMMEDIATELY HERE
+                        Log.e("onSelected", "onSelected: pathList=" + pathList);
+
+                    }
+                })
+                .originalEnable(true)
+                .maxOriginalSize(10)
+                .autoHideToolbarOnSingleTap(true)
+                .setOnCheckedListener(new OnCheckedListener() {
+                    @Override
+                    public void onCheck(boolean isChecked) {
+                        // DO SOMETHING IMMEDIATELY HERE
+                        Log.e("isChecked", "onCheck: isChecked=" + isChecked);
+                    }
+                })
+                .forResult(REQUEST_CODE_CHOOSE);
+    }
+
+    private String getFileExtension(Uri uri){
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 }
