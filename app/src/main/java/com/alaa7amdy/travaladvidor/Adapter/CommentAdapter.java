@@ -36,13 +36,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
     private Context mContext;
     private List<Comment> mComment;
     private String postid;
+    private String profileid;
 
     private FirebaseUser firebaseUser;
 
-    public CommentAdapter(Context context, List<Comment> comments, String postid){
+    public CommentAdapter(Context context, List<Comment> comments, String postid, String profileid){
         mContext = context;
         mComment = comments;
         this.postid = postid;
+        this.profileid = profileid;
     }
 
     @NonNull
@@ -102,6 +104,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()){
+                                                    deleteFollowNotifications(postid, comment.getComment() );
                                                     Toast.makeText(mContext, "Deleted!", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -146,6 +149,25 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ImageVie
                 User user = dataSnapshot.getValue(User.class);
                 Glide.with(mContext).load(user.getImageurl()).into(imageView);
                 username.setText(user.getUsername());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void deleteFollowNotifications(final String postid, final String comment){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    if (snapshot.child("postid").getValue().equals(postid) && snapshot.child("text").getValue().equals("commented: "+comment) ){
+                        snapshot.getRef().removeValue();
+                    }
+                }
             }
 
             @Override

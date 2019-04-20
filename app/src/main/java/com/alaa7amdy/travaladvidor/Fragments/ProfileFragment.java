@@ -140,7 +140,7 @@ public class ProfileFragment extends Fragment {
                             .child("following").child(profileid).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(profileid)
                             .child("followers").child(firebaseUser.getUid()).removeValue();
-
+                    deleteFollowNotifications();
                 }
             }
         });
@@ -198,10 +198,29 @@ public class ProfileFragment extends Fragment {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
-        hashMap.put("postid", "");
+        hashMap.put("postid", profileid);
         hashMap.put("ispost", false);
 
         reference.push().setValue(hashMap);
+    }
+
+    private void deleteFollowNotifications(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(profileid);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    if (snapshot.child("postid").getValue().equals(profileid) && snapshot.child("text").getValue().equals("started following you") ){
+                        snapshot.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void userInfo(){
@@ -327,6 +346,7 @@ public class ProfileFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                mySaves.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     mySaves.add(snapshot.getKey());
                 }

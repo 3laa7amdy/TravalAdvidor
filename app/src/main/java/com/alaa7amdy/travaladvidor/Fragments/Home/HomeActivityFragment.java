@@ -30,12 +30,12 @@ public class HomeActivityFragment extends Fragment {
     }
     private void setupViewPager(){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getChildFragmentManager());
-        adapter.addFragment(new CameraFragment()); //index 0
-        adapter.addFragment(new HomeFragment()); //index 1
-        adapter.addFragment(new MessagesFragment()); //index 2
+        //adapter.addFragment(new CameraFragment()); //index 0
+        adapter.addFragment(new HomeFragment()); //index 0
+        adapter.addFragment(new MessagesFragment()); //index 1
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.container);
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -45,11 +45,10 @@ public class HomeActivityFragment extends Fragment {
             @Override
             public void onPageSelected(int i) {
                 switch (viewPager.getCurrentItem()){
-                    case 1:
+                    case 0:
                         bottom_navigation.setVisibility(View.VISIBLE);
                         break;
-                    case 0:
-                    case 2:
+                    case 1:
                         bottom_navigation.setVisibility(View.GONE);
                         break;
                 }
@@ -66,11 +65,10 @@ public class HomeActivityFragment extends Fragment {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (viewPager.getCurrentItem()){
-                    case 1:
+                    case 0:
                         bottom_navigation.setVisibility(View.VISIBLE);
                         break;
-                    case 0:
-                    case 2:
+                    case 1:
                         bottom_navigation.setVisibility(View.GONE);
                         break;
                 }

@@ -135,6 +135,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             holder.description.setText(post.getDescription());
         }
 
+        if (!post.getPublisher().equals(firebaseUser.getUid())){
+            holder.more.setVisibility(View.GONE);
+        }
+
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
         isLiked(post.getPostid(), holder.like);
         isSaved(post.getPostid(), holder.save);
@@ -151,6 +155,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Likes").child(post.getPostid())
                             .child(firebaseUser.getUid()).removeValue();
+                    deleteLikeNotifications(post.getPublisher(), post.getPostid());
                 }
             }
         });
@@ -280,9 +285,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                                             }
                                         });
                                 return true;
-                            case R.id.report:
-                                Toast.makeText(mContext, "Reported clicked!", Toast.LENGTH_SHORT).show();
-                                return true;
                             default:
                                 return false;
                         }
@@ -367,6 +369,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
                                         Toast.makeText(mContext, "Deleted!", Toast.LENGTH_SHORT).show();
                                     }
                                 });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void deleteLikeNotifications(String userid, final String postid){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    if (snapshot.child("postid").getValue().equals(postid) && snapshot.child("text").getValue().equals("liked your post") ){
+                        snapshot.getRef().removeValue();
                     }
                 }
             }

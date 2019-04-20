@@ -105,6 +105,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
                             .child("following").child(user.getId()).removeValue();
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(user.getId())
                             .child("followers").child(firebaseUser.getUid()).removeValue();
+                    deleteFollowNotifications(user.getId());
                 }
             }
 
@@ -117,10 +118,29 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ImageViewHolde
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("userid", firebaseUser.getUid());
         hashMap.put("text", "started following you");
-        hashMap.put("postid", "");
+        hashMap.put("postid", userid);
         hashMap.put("ispost", false);
 
         reference.push().setValue(hashMap);
+    }
+
+    private void deleteFollowNotifications(final String userid){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications").child(userid);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    if (snapshot.child("postid").getValue().equals(userid) && snapshot.child("text").getValue().equals("started following you") ){
+                        snapshot.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
