@@ -438,9 +438,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Glide.with(mContext).load(user.getImageurl()).into(image_profile);
-                username.setText(user.getUsername());
-                publisher.setText(user.getUsername());
+                if (user != null) {
+                    Glide.with(mContext).load(user.getImageurl()).into(image_profile);
+                    username.setText(user.getUsername());
+                    publisher.setText(user.getUsername());
+                }
+
             }
 
             @Override
@@ -459,12 +462,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(firebaseUser.getUid()).exists()){
-                    imageView.setImageResource(R.drawable.ic_liked);
-                    imageView.setTag("liked");
-                } else{
-                    imageView.setImageResource(R.drawable.ic_like);
-                    imageView.setTag("like");
+                if (firebaseUser != null) {
+                    if (dataSnapshot.child(firebaseUser.getUid()).exists()){
+                        imageView.setImageResource(R.drawable.ic_liked);
+                        imageView.setTag("liked");
+                    } else{
+                        imageView.setImageResource(R.drawable.ic_like);
+                        imageView.setTag("like");
+                    }
                 }
             }
 

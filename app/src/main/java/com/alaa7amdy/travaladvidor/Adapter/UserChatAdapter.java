@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alaa7amdy.travaladvidor.MainActivity;
+import com.alaa7amdy.travaladvidor.Fragments.Home.Message.MessageActivity;
 import com.alaa7amdy.travaladvidor.Model.Chat;
 import com.alaa7amdy.travaladvidor.Model.User;
 import com.alaa7amdy.travaladvidor.R;
