@@ -141,6 +141,10 @@ public class HomeFragment extends Fragment {
 
                         }
                     }
+                    if (post.getPublisher().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                        postList.add(post);
+
+                    }
                 }
 
                 postAdapter.notifyDataSetChanged();
