@@ -1,7 +1,4 @@
 package com.alaa7amdy.travaladvidor.Fragments.Home.Message;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,24 +8,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alaa7amdy.travaladvidor.Adapter.UserChatAdapter;
 import com.alaa7amdy.travaladvidor.Model.Chat;
 import com.alaa7amdy.travaladvidor.Model.User;
-import com.alaa7amdy.travaladvidor.Model.UserChat;
 import com.alaa7amdy.travaladvidor.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,17 +24,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class MessagesFragment extends Fragment {
@@ -67,7 +51,7 @@ public class MessagesFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
@@ -107,11 +91,18 @@ public class MessagesFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
 
 
-                Picasso.get().load(user.getImageurl()).into(profile_image);
+//                Picasso.get().load(user.getImageurl()).into(profile_image);
 
-                //Glide.with(context).load("https://images.pexels.com/photos/2040406/pexels-photo-2040406.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940").into(profile_image);
 
-                username.setText(user.getUsername());
+                if (getParentFragment() != null) {
+                    if (user != null) {
+                        Glide.with(getParentFragment()).load(user.getImageurl()).into(profile_image);
+                    }
+                }
+
+                if (user != null) {
+                    username.setText(user.getUsername());
+                }
 
 
             }

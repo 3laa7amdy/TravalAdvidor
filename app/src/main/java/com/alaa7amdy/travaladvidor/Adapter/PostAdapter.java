@@ -28,9 +28,12 @@ import com.alaa7amdy.travaladvidor.CommentsActivity;
 import com.alaa7amdy.travaladvidor.FollowersActivity;
 import com.alaa7amdy.travaladvidor.Fragments.PostDetailFragment;
 import com.alaa7amdy.travaladvidor.Fragments.ProfileFragment;
+import com.alaa7amdy.travaladvidor.HashtagActivity;
 import com.alaa7amdy.travaladvidor.Model.Post;
 import com.alaa7amdy.travaladvidor.Model.User;
 import com.alaa7amdy.travaladvidor.R;
+import com.apradanas.simplelinkabletext.Link;
+import com.apradanas.simplelinkabletext.LinkableTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,6 +49,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -123,16 +127,56 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         initializeViews(post.getimages(), post.getImagesNr(), holder, position);
 
+        // find hashtags
+        final Link linkHashtag = new Link(Pattern.compile("(#\\w+)"))
+                .setUnderlined(true)
+                .setTextStyle(Link.TextStyle.ITALIC)
+                .setTextColor(Color.parseColor("#3b6ae2"))
+                .setClickListener(new Link.OnClickListener() {
+                    @Override
+                    public void onClick(String text) {
+                        Intent intent = new Intent(mContext, HashtagActivity.class);
+                        intent.putExtra("hashtag", holder.descriptions.getFoundLinks().get(0).getText());
+                        intent.putExtra("title", "followers");
+                        mContext.startActivity(intent);
+                    }
+                });
+
+
+        List<Link> links = new ArrayList<>();
+        links.add(linkHashtag);
+
+        holder.descriptions.addLinks(links);
+
+
         if (post.getDescription().equals("")){
-            holder.description.setVisibility(View.GONE);
-        } else if (post.getDescription().length() < 100) {
-            holder.description.setVisibility(View.VISIBLE);
-            holder.description.setText(post.getDescription());
-        } else if (post.getDescription().length() > 100) {
-            holder.description.setVisibility(View.VISIBLE);
-            holder.description.setMaxLines(4);
-            holder.readMore.setVisibility(View.VISIBLE);
-            holder.description.setText(post.getDescription());
+
+            holder.descriptions.setVisibility(View.GONE);
+            holder.descript.setVisibility(View.GONE);
+        }else if (post.getLinks() != null){
+
+
+            if (post.getDescription().length() < 100) {
+                holder.descriptions.setVisibility(View.VISIBLE);
+                holder.descriptions.setText(post.getDescription()).build();
+            } else if (post.getDescription().length() > 100) {
+                holder.descriptions.setVisibility(View.VISIBLE);
+                holder.descriptions.setMaxLines(4);
+                holder.readMore.setVisibility(View.VISIBLE);
+                holder.descriptions.setText(post.getDescription()).build();
+            }
+        } else {
+
+            if (post.getDescription().length() < 100) {
+                holder.descript.setVisibility(View.VISIBLE);
+                holder.descript.setText(post.getDescription());
+            } else if (post.getDescription().length() > 100) {
+                holder.descript.setVisibility(View.VISIBLE);
+                holder.descript.setMaxLines(4);
+                holder.readMore.setVisibility(View.VISIBLE);
+                holder.descript.setText(post.getDescription());
+            }
+
         }
 
         if (!post.getPublisher().equals(firebaseUser.getUid())){
@@ -163,10 +207,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
         holder.readMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.description.setVisibility(View.VISIBLE);
-                holder.description.setMaxLines(250);
-                holder.readMore.setVisibility(View.INVISIBLE);
-                holder.description.setText(post.getDescription());
+                if(post.getLinks() != null){
+                    holder.descriptions.setVisibility(View.VISIBLE);
+                    holder.descriptions.setMaxLines(250);
+                    holder.readMore.setVisibility(View.INVISIBLE);
+                    holder.descriptions.setText(post.getDescription()).build();
+                }else {
+                    holder.descript.setVisibility(View.VISIBLE);
+                    holder.descript.setMaxLines(250);
+                    holder.readMore.setVisibility(View.INVISIBLE);
+                    holder.descript.setText(post.getDescription());
+                }
+
             }
         });
 
@@ -308,8 +360,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView image_profile, like, comment, save, more;
-        public TextView username, likes, publisher, description, comments, readMore;
-
+        public TextView username, likes, publisher, comments, readMore;
+        public LinkableTextView descriptions;
+        public TextView descript;
 
         public ViewPager images_slider;
         public LinearLayout pages_dots;
@@ -326,7 +379,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             save = itemView.findViewById(R.id.save);
             likes = itemView.findViewById(R.id.likes);
             publisher = itemView.findViewById(R.id.publisher);
-            description = itemView.findViewById(R.id.description);
+            descriptions = itemView.findViewById(R.id.descriptions);
+            descript = itemView.findViewById(R.id.descript);
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
             readMore = itemView.findViewById(R.id.read_more);

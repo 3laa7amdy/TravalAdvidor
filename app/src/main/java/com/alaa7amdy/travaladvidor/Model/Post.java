@@ -19,7 +19,15 @@ public class Post {
     private String description;
     private String publisher;
     private String imagesNr;
+    private String links ;
 
+    public String getLinks() {
+        return links;
+    }
+
+    public void setLinks(String links) {
+        this.links = links;
+    }
 
     public int getImagesNr() {
         int nr = Integer.parseInt(imagesNr);
@@ -33,7 +41,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String postimage8, String postimage9, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String postimage8, String postimage9, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -48,9 +56,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String postimage8, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String postimage8, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -64,8 +73,9 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String postimage7, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -78,9 +88,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String postimage6, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -92,9 +103,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String postimage5, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -105,9 +117,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String postimage4, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -117,9 +130,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String postimage3, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -128,9 +142,10 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String postimage2, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String postimage2, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
@@ -138,23 +153,26 @@ public class Post {
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String postimage1, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String postimage1, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.postimage1 = postimage1;
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
-    public Post(String postid, String postimage0, String description, String publisher, String imagesNr) {
+    public Post(String postid, String postimage0, String description, String publisher, String imagesNr ,String links) {
         this.postid = postid;
         this.postimage0 = postimage0;
         this.description = description;
         this.publisher = publisher;
         this.imagesNr = imagesNr;
+        this.links = links;
     }
 
     public String getPostid() {

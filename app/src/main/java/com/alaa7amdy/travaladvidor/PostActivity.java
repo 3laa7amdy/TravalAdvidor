@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,12 +28,11 @@ import android.widget.Toast;
 import com.alaa7amdy.travaladvidor.Adapter.Images.GifSizeFilter;
 import com.alaa7amdy.travaladvidor.Adapter.Images.Glide4Engine;
 import com.alaa7amdy.travaladvidor.Adapter.Images.SliderPagerAdapter;
-import com.alaa7amdy.travaladvidor.MainActivity;
-import com.alaa7amdy.travaladvidor.R;
+import com.apradanas.simplelinkabletext.Link;
+import com.apradanas.simplelinkabletext.LinkableEditText;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +51,7 @@ import com.zhihu.matisse.listener.OnSelectedListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Pattern;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -73,9 +71,10 @@ public class PostActivity extends AppCompatActivity {
     TextView post;
     TextView addImages;
     LinearLayout imagesContainer;
-    EditText description;
+    LinkableEditText description;
 
-    private Uri mImageUri;
+    Link linkHashtag;
+
 
 
     @Override
@@ -88,6 +87,19 @@ public class PostActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
         addImages = findViewById(R.id.add_images);
         imagesContainer = findViewById(R.id.image_container);
+
+
+        // find hashtags
+        linkHashtag = new Link(Pattern.compile("(#\\w+)"))
+                .setUnderlined(true)
+                .setTextStyle(Link.TextStyle.ITALIC)
+                .setTextColor(Color.parseColor("#3b6ae2"));
+
+
+        List<Link> links = new ArrayList<>();
+        links.add(linkHashtag);
+
+        description.addLinks(links);
 
         pages_dots = findViewById(R.id.image_page_dots);
         images_slider = (ViewPager)findViewById(R.id.image_page_slider);
@@ -199,10 +211,18 @@ public class PostActivity extends AppCompatActivity {
 
         }
 
+
         hashMap.put("postid", postid);
         hashMap.put("imagesNr","" + slider_image_list.size());
         hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
         hashMap.put("description", description.getText().toString());
+        String textFoundLinks = "";
+        if (description.getFoundLinks().size() != 0 ) {
+            textFoundLinks  = description.getFoundLinks().get(0).getText();
+            hashMap.put("links",textFoundLinks);
+        }
+
+
 
         reference.child(postid).setValue(hashMap);
 

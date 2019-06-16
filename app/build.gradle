@@ -36,7 +36,8 @@ dependencies {
     implementation 'com.github.shts:StoriesProgressView:3.0.0'
     implementation 'com.github.pwittchen:swipe-rx2:0.3.0'
 
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.apradanas.simplelinkabletext:library:1.0.3@aar'
+
     implementation 'com.facebook.android:facebook-android-sdk:4.42.0'
 
     testImplementation 'junit:junit:4.12'
@@ -44,6 +45,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'com.zhihu.android:matisse:0.5.2-beta4'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

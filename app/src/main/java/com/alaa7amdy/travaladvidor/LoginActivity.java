@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 pd = new ProgressDialog(LoginActivity.this);
                 pd.setMessage("Please wait...");
+                pd.setCanceledOnTouchOutside(false);
                 pd.show();
 
                 String str_email = email.getText().toString();
