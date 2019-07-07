@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -148,6 +150,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
 
         holder.descriptions.addLinks(links);
 
+
+
+
+        long timeend = post.getPostTime();
+        String str = (String) DateUtils.getRelativeDateTimeString(mContext, timeend,DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+        holder.postTime.setText(str);
 
         if (post.getDescription().equals("")){
 
@@ -360,7 +368,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
     public class ImageViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView image_profile, like, comment, save, more;
-        public TextView username, likes, publisher, comments, readMore;
+        public TextView username, likes, publisher, comments, readMore,postTime;
         public LinkableTextView descriptions;
         public TextView descript;
 
@@ -384,6 +392,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ImageViewHolde
             comments = itemView.findViewById(R.id.comments);
             more = itemView.findViewById(R.id.more);
             readMore = itemView.findViewById(R.id.read_more);
+            postTime = itemView.findViewById(R.id.post_time);
 
             pages_dots = (LinearLayout) itemView.findViewById(R.id.image_page_dots);
             images_slider = (ViewPager)itemView.findViewById(R.id.image_page_slider);

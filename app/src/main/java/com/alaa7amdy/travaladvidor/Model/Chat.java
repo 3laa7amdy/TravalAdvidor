@@ -7,11 +7,22 @@ public class Chat {
     private String message;
     private boolean isseen;
 
-    public Chat(String sender, String receiver, String message, boolean isseen) {
+    public long getMassageTime() {
+        return massageTime;
+    }
+
+    public void setMassageTime(long massageTime) {
+        this.massageTime = massageTime;
+    }
+
+    private long massageTime;
+
+    public Chat(String sender, String receiver, String message, boolean isseen, long massageTime) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.isseen = isseen;
+        this.massageTime = massageTime;
     }
 
     public Chat() {

@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -214,6 +215,7 @@ public class PostActivity extends AppCompatActivity {
 
         hashMap.put("postid", postid);
         hashMap.put("imagesNr","" + slider_image_list.size());
+        hashMap.put("postTime", ServerValue.TIMESTAMP);
         hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
         hashMap.put("description", description.getText().toString());
         String textFoundLinks = "";

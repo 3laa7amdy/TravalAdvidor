@@ -3,6 +3,7 @@ package com.alaa7amdy.travaladvidor.Adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         holder.show_message.setText(chat.getMessage());
 
+        long timeend = chat.getMassageTime();
+        String str = (String) DateUtils.getRelativeDateTimeString(mContext, timeend,DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+        holder.messageTime.setText(str);
 
         Glide.with(mContext).load(imageurl).into(holder.profile_image);
 
@@ -77,7 +81,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public  class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView show_message;
+        public TextView show_message,messageTime;
         public ImageView profile_image;
         public TextView txt_seen;
 
@@ -87,6 +91,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen);
+            messageTime = itemView.findViewById(R.id.message_time);
         }
     }
 

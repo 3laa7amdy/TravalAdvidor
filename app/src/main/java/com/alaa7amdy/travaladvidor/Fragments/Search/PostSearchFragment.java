@@ -1,8 +1,10 @@
-package com.alaa7amdy.travaladvidor.Fragments;
+package com.alaa7amdy.travaladvidor.Fragments.Search;
+
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -12,9 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.alaa7amdy.travaladvidor.Adapter.PostAdapter;
 import com.alaa7amdy.travaladvidor.Adapter.UserAdapter;
+import com.alaa7amdy.travaladvidor.Fragments.Home.HomeFragment;
+import com.alaa7amdy.travaladvidor.Fragments.Home.Message.MessagesFragment;
+import com.alaa7amdy.travaladvidor.Model.Post;
 import com.alaa7amdy.travaladvidor.Model.User;
 import com.alaa7amdy.travaladvidor.R;
+import com.alaa7amdy.travaladvidor.SectionsPagerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,22 +31,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends Fragment {
+public class PostSearchFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private UserAdapter userAdapter;
-    private List<User> userList;
+    private PostAdapter postAdapter;
+    private List<Post> postList;
 
     EditText search_bar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        // Inflate the layout for this fragment
+
+        View view = inflater.inflate(R.layout.fragment_post_search, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -47,11 +55,10 @@ public class SearchFragment extends Fragment {
 
         search_bar = view.findViewById(R.id.search_bar);
 
-        userList = new ArrayList<>();
-        userAdapter = new UserAdapter(getContext(), userList, true);
-        recyclerView.setAdapter(userAdapter);
+        postList = new ArrayList<>();
+        postAdapter = new PostAdapter(getContext(), postList);
+        recyclerView.setAdapter(postAdapter);
 
-        readUsers();
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -60,7 +67,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                searchUsers(charSequence.toString().toLowerCase());
+                searchPosts(charSequence.toString().toLowerCase());
             }
 
             @Override
@@ -72,49 +79,27 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    private void searchUsers(String s){
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("username")
-                .startAt(s)
-                .endAt(s+"\uf8ff");
+
+
+    private void searchPosts(final String s){
+        Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("description");
+
+
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userList.clear();
+                postList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                        userList.add(user);
-                }
+                    Post post = snapshot.getValue(Post.class);
+                    if (post != null && post.getDescription().contains(s)) {
 
-                userAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void readUsers() {
-
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (search_bar.getText().toString().equals("")) {
-                    userList.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-
-                        userList.add(user);
-
+                        postList.add(post);
                     }
 
-                    userAdapter.notifyDataSetChanged();
                 }
+
+                postAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -123,4 +108,6 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-}
+
+
+    }
